@@ -11,10 +11,11 @@ import { safe } from './utils';
 import * as actions from './actions';
 
 const router = Router();
+//login
+router.post('/login',safe(actions.login))
 
 // signup route, creates a new user in the DB
 router.post('/user', safe(actions.createUser));
-router.get('/user', safe(actions.getUsers));
 
 //planets
 router.get('/planet', safe(actions.getPlanets));
