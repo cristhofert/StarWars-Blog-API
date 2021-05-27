@@ -35,14 +35,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
-exports.getFavorites = exports.getCharacter = exports.getPlanet = exports.getCharacters = exports.getPlanets = exports.getUsers = exports.createUser = void 0;
+exports.deleteFavoritCharacter = exports.deleteFavoritPlanet = exports.addCharacterFavorite = exports.addPlanetFavorite = exports.login = exports.createPlanets = exports.createCharacters = exports.getFavorites = exports.getCharacter = exports.getPlanet = exports.getCharacters = exports.getPlanets = exports.getUsers = exports.createUser = void 0;
 var typeorm_1 = require("typeorm"); // getRepository"  traer una tabla de la base de datos asociada al objeto
 var User_1 = require("./entities/User");
 var utils_1 = require("./utils");
 var Planet_1 = require("./entities/Planet");
 var Character_1 = require("./entities/Character");
 var Favorite_1 = require("./entities/Favorite");
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userRepo, user, newUser, results;
     return __generator(this, function (_a) {
@@ -138,7 +142,7 @@ var getFavorites = function (req, res) { return __awaiter(void 0, void 0, void 0
     var favorites;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).find({ where: { user: req.params.uid } })];
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).find({ where: { user: req.user } })];
             case 1:
                 favorites = _a.sent();
                 return [2 /*return*/, res.json(favorites)];
@@ -146,3 +150,222 @@ var getFavorites = function (req, res) { return __awaiter(void 0, void 0, void 0
     });
 }); };
 exports.getFavorites = getFavorites;
+var createCharacters = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var results, index, charactersRepo, character, newCharacter, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                results = [];
+                index = 0;
+                _c.label = 1;
+            case 1:
+                if (!(index < req.body.length)) return [3 /*break*/, 7];
+                if (!req.body[index].name)
+                    results.push("Please provide a name " + index);
+                if (!req.body[index].height)
+                    results.push("Please provide some height " + index);
+                if (!req.body[index].mass)
+                    results.push("Please provide some mass " + index);
+                if (!req.body[index].hair_color)
+                    results.push("Please provide some hair_color " + index);
+                if (!req.body[index].skin_color)
+                    results.push("Please provide some skin_color " + index);
+                if (!req.body[index].eye_color)
+                    results.push("Please provide some eye_color " + index);
+                if (!req.body[index].birth_year)
+                    results.push("Please provide the birth_year " + index);
+                if (!req.body[index].gender)
+                    results.push("Please provide some gender " + index);
+                if (!req.body[index].homeworld)
+                    results.push("Please provide a homeworld " + index);
+                if (!req.body[index].url)
+                    results.push("Please provide an url " + index);
+                charactersRepo = typeorm_1.getRepository(Character_1.Character);
+                return [4 /*yield*/, charactersRepo.findOne({ where: { name: req.body[index].name } })];
+            case 2:
+                character = _c.sent();
+                if (!character) return [3 /*break*/, 3];
+                results.push("That character alrady exists");
+                return [3 /*break*/, 6];
+            case 3:
+                if (!(!req.body[index].name || !req.body[index].height || !req.body[index].mass || !req.body[index].hair_color || !req.body[index].skin_color || !req.body[index].eye_color || !req.body[index].birth_year || !req.body[index].gender || !req.body[index].homeworld || !req.body[index].url)) return [3 /*break*/, 4];
+                results.push("that character " + req.body[index].name + " wasnt save");
+                return [3 /*break*/, 6];
+            case 4:
+                newCharacter = typeorm_1.getRepository(Character_1.Character).create(req.body[index]);
+                _b = (_a = results).push;
+                return [4 /*yield*/, typeorm_1.getRepository(Character_1.Character).save(newCharacter)];
+            case 5:
+                _b.apply(_a, [_c.sent()]);
+                _c.label = 6;
+            case 6:
+                index++;
+                return [3 /*break*/, 1];
+            case 7: return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.createCharacters = createCharacters;
+var createPlanets = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var results, index, planetsRepo, planet, newPlanet, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                results = [];
+                index = 0;
+                _c.label = 1;
+            case 1:
+                if (!(index < req.body.length)) return [3 /*break*/, 7];
+                if (!req.body[index].name)
+                    results.push("Please provide a name " + index);
+                if (!req.body[index].diameter)
+                    results.push("Please provide some diameter " + index);
+                if (!req.body[index].rotation_period)
+                    results.push("Please provide some the rotation period " + index);
+                if (!req.body[index].orbital_period)
+                    results.push("Please provide the orbital period " + index);
+                if (!req.body[index].gravity)
+                    results.push("Please provide the gravity " + index);
+                if (!req.body[index].population)
+                    results.push("Please provide the population " + index);
+                if (!req.body[index].climate)
+                    results.push("Please provide the climate " + index);
+                if (!req.body[index].terrain)
+                    results.push("Please provide the terrain " + index);
+                if (!req.body[index].surface_water)
+                    results.push("Please provide surface_water " + index);
+                if (!req.body[index].url)
+                    results.push("Please provide an url " + index);
+                planetsRepo = typeorm_1.getRepository(Planet_1.Planet);
+                return [4 /*yield*/, planetsRepo.findOne({ where: { name: req.body[index].name } })];
+            case 2:
+                planet = _c.sent();
+                if (!planet) return [3 /*break*/, 3];
+                results.push("That planet alrady exists");
+                return [3 /*break*/, 6];
+            case 3:
+                if (!(!req.body[index].name || !req.body[index].diameter || !req.body[index].rotation_period || !req.body[index].orbital_period || !req.body[index].gravity || !req.body[index].population || !req.body[index].climate || !req.body[index].terrain || !req.body[index].surface_water || !req.body[index].url)) return [3 /*break*/, 4];
+                results.push("that planet " + req.body[index].name + " wasnt save");
+                return [3 /*break*/, 6];
+            case 4:
+                newPlanet = typeorm_1.getRepository(Planet_1.Planet).create(req.body[index]);
+                _b = (_a = results).push;
+                return [4 /*yield*/, typeorm_1.getRepository(Planet_1.Planet).save(newPlanet)];
+            case 5:
+                _b.apply(_a, [_c.sent()]);
+                _c.label = 6;
+            case 6:
+                index++;
+                return [3 /*break*/, 1];
+            case 7: return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.createPlanets = createPlanets;
+//controlador para el logueo
+var login = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userRepo, user, token;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!req.body.email)
+                    throw new utils_1.Exception("Please specify an email on your request body", 400);
+                if (!req.body.password)
+                    throw new utils_1.Exception("Please specify a password on your request body", 400);
+                return [4 /*yield*/, typeorm_1.getRepository(User_1.User)
+                    // We need to validate that a user with this email and password exists in the DB
+                ];
+            case 1:
+                userRepo = _a.sent();
+                return [4 /*yield*/, userRepo.findOne({ where: { email: req.body.email, password: req.body.password } })];
+            case 2:
+                user = _a.sent();
+                if (!user)
+                    throw new utils_1.Exception("Invalid email or password", 401);
+                token = jsonwebtoken_1["default"].sign({ user: user }, process.env.JWT_KEY, { expiresIn: 60 * 60 });
+                // return the user and the recently created token to the client
+                return [2 /*return*/, res.json({ user: user, token: token })];
+        }
+    });
+}); };
+exports.login = login;
+var addPlanetFavorite = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, favorite, planeta, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                token = req.user;
+                favorite = new Favorite_1.Favorite();
+                favorite.user = token.user;
+                return [4 /*yield*/, typeorm_1.getRepository(Planet_1.Planet).findOne(req.params.id)];
+            case 1:
+                planeta = _a.sent();
+                favorite.planet = planeta;
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).save(favorite)];
+            case 2:
+                results = _a.sent();
+                return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.addPlanetFavorite = addPlanetFavorite;
+var addCharacterFavorite = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, favorite, character, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                token = req.user;
+                favorite = new Favorite_1.Favorite();
+                favorite.user = token.user;
+                return [4 /*yield*/, typeorm_1.getRepository(Character_1.Character).findOne(req.params.id)];
+            case 1:
+                character = _a.sent();
+                favorite.character = character;
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).save(favorite)];
+            case 2:
+                results = _a.sent();
+                return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.addCharacterFavorite = addCharacterFavorite;
+var deleteFavoritPlanet = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var planet, planetFavorite, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Planet_1.Planet).findOne(req.params.id)];
+            case 1:
+                planet = _a.sent();
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).findOne({ where: { planet: planet } })];
+            case 2:
+                planetFavorite = _a.sent();
+                if (!planetFavorite)
+                    throw new utils_1.Exception("No tenes ese planeta en Favorites");
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite)["delete"]({ planet: planet })];
+            case 3:
+                results = _a.sent();
+                return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.deleteFavoritPlanet = deleteFavoritPlanet;
+var deleteFavoritCharacter = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var character, characterFavorite, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Character_1.Character).findOne(req.params.id)];
+            case 1:
+                character = _a.sent();
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).findOne({ where: { character: character } })];
+            case 2:
+                characterFavorite = _a.sent();
+                if (!characterFavorite)
+                    throw new utils_1.Exception("No tienes ese character en Favorites");
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite)["delete"]({ character: character })];
+            case 3:
+                results = _a.sent();
+                return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.deleteFavoritCharacter = deleteFavoritCharacter;

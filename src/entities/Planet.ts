@@ -11,7 +11,7 @@ import { Favorite } from './Favorite';
     id: number;
   
     @Column()
-    nombre: string;
+    name: string;
 
     @Column()
     diameter: string;

@@ -30,15 +30,24 @@ var express_1 = require("express");
 var utils_1 = require("./utils");
 var actions = __importStar(require("./actions"));
 var router = express_1.Router();
+//login
+router.post('/login', utils_1.safe(actions.login));
 // signup route, creates a new user in the DB
 router.post('/user', utils_1.safe(actions.createUser));
-router.get('/user', utils_1.safe(actions.getUsers));
 //planets
 router.get('/planet', utils_1.safe(actions.getPlanets));
 router.get('/planet/:id', utils_1.safe(actions.getPlanet));
+router.post('/planet/', utils_1.safe(actions.createPlanets));
 //characters
 router.get('/character', utils_1.safe(actions.getCharacters));
 router.get('/character/:id', utils_1.safe(actions.getCharacter));
-//favorites [GET] /users/favorites
+router.post('/character/', utils_1.safe(actions.createCharacters));
+//favorites 
 router.get('/users/:uid/favorites', utils_1.safe(actions.getFavorites));
+///favorite - planet
+router.post('/favorite/planet/:id', utils_1.safe(actions.addPlanetFavorite));
+router["delete"]('/favorite/planet/:id', utils_1.safe(actions.deleteFavoritPlanet));
+///favorite - character
+router.post('/favorite/character/:id', utils_1.safe(actions.addCharacterFavorite));
+router["delete"]('/favorite/character/:id', utils_1.safe(actions.deleteFavoritCharacter));
 exports["default"] = router;

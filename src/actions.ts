@@ -62,19 +62,19 @@ export const createCharacters = async (req: Request, res: Response): Promise<Res
         
     if(!req.body[index].name) results.push(`Please provide a name ${index}`)
 	if(!req.body[index].height) results.push(`Please provide some height ${index}`)
-	if(!req.body[index].weight) results.push(`Please provide some weight ${index}`)
-    if(!req.body[index].hair_color) results.push(`Please provide some hair color ${index}`)
+	if(!req.body[index].mass) results.push(`Please provide some mass ${index}`)
+    if(!req.body[index].hair_color) results.push(`Please provide some hair_color ${index}`)
     if(!req.body[index].skin_color)results.push(`Please provide some skin_color ${index}`)
     if(!req.body[index].eye_color) results.push(`Please provide some eye_color ${index}`)
-    if(!req.body[index].date_of_birth) results.push(`Please provide the date_of_birth ${index}`)
-    if(!req.body[index].gender) results.push(`Please provide somegender ${index}`)
-    if(!req.body[index].description) results.push(`Please provide adescription ${index}`)
-    if(!req.body[index].img_url) results.push(`Please provide an img_url ${index}`)
+    if(!req.body[index].birth_year) results.push(`Please provide the birth_year ${index}`)
+    if(!req.body[index].gender) results.push(`Please provide some gender ${index}`)
+    if(!req.body[index].homeworld) results.push(`Please provide a homeworld ${index}`)
+    if(!req.body[index].url) results.push(`Please provide an url ${index}`)
 
     const charactersRepo = getRepository(Character)
 	const character = await charactersRepo.findOne({ where: {name: req.body[index].name }})
     if(character)results.push("That character alrady exists")
-    else if (!req.body[index].name||!req.body[index].height||!req.body[index].weight||!req.body[index].hair_color||!req.body[index].skin_color||!req.body[index].eye_color||!req.body[index].date_of_birth||!req.body[index].gender||!req.body[index].description||!req.body[index].img_url)
+    else if (!req.body[index].name||!req.body[index].height||!req.body[index].mass||!req.body[index].hair_color||!req.body[index].skin_color||!req.body[index].eye_color||!req.body[index].birth_year||!req.body[index].gender||!req.body[index].homeworld||!req.body[index].url)
     {
         results.push(`that character ${req.body[index].name} wasnt save`)
     } else {const newCharacter = getRepository(Character).create(req.body[index]);  
@@ -96,18 +96,20 @@ export const createPlanets = async (req: Request, res: Response): Promise<Respon
     if(!req.body[index].orbital_period) results.push(`Please provide the orbital period ${index}`)
     if(!req.body[index].gravity) results.push(`Please provide the gravity ${index}`)
     if(!req.body[index].population) results.push(`Please provide the population ${index}`)
-    if(!req.body[index].weather) results.push(`Please provide the weather ${index}`)
-    if(!req.body[index].land) results.push(`Please provide the land ${index}`)
-    if(!req.body[index].water_on_surface) results.push(`Please provide water_on_surface ${index}`)
-    if(!req.body[index].img_url) results.push(`Please provide an img_url ${index}`)
+    if(!req.body[index].climate) results.push(`Please provide the climate ${index}`)
+    if(!req.body[index].terrain) results.push(`Please provide the terrain ${index}`)
+    if(!req.body[index].surface_water) results.push(`Please provide surface_water ${index}`)
+    if(!req.body[index].url) results.push(`Please provide an url ${index}`)
 
     const planetsRepo = getRepository(Planet)
 	const planet = await planetsRepo.findOne({ where: {name: req.body[index].name }})
-    if(planet)results.push("That planet alrady exists")
-    else if (!req.body[index].name||!req.body[index].diameter||!req.body[index].rotation_period||!req.body[index].orbital_period||!req.body[index].gravity||!req.body[index].population||!req.body[index].weather||!req.body[index].land||!req.body[index].water_on_surface||!req.body[index].img_url)
+    if(planet){
+        results.push("That planet alrady exists")}
+    else if (!req.body[index].name||!req.body[index].diameter||!req.body[index].rotation_period||!req.body[index].orbital_period||!req.body[index].gravity||!req.body[index].population||!req.body[index].climate||!req.body[index].terrain||!req.body[index].surface_water||!req.body[index].url)
     {
         results.push(`that planet ${req.body[index].name} wasnt save`)
-    } else {const newPlanet = getRepository(Planet).create(req.body[index]); 
+    } else {
+        const newPlanet = getRepository(Planet).create(req.body[index]); 
 	results.push(await getRepository(Planet).save(newPlanet))} 
     
        

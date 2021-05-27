@@ -20,11 +20,11 @@ router.post('/user', safe(actions.createUser));
 //planets
 router.get('/planet', safe(actions.getPlanets));
 router.get('/planet/:id', safe(actions.getPlanet));
-router.post('/character/:id', safe(actions.createCharacters));
+router.post('/planet/', safe(actions.createPlanets));
 //characters
 router.get('/character', safe(actions.getCharacters));
 router.get('/character/:id', safe(actions.getCharacter));
-router.post('/character/:id', safe(actions.createCharacters));
+router.post('/character/', safe(actions.createCharacters));
 //favorites 
 router.get('/users/:uid/favorites', safe(actions.getFavorites));
 ///favorite - planet

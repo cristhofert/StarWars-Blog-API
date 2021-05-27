@@ -40,7 +40,7 @@ var Planet = /** @class */ (function (_super) {
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Planet.prototype, "nombre");
+    ], Planet.prototype, "name");
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
