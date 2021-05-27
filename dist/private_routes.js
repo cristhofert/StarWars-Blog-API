@@ -52,4 +52,10 @@ var verifyToken = function (req, res, next) {
 };
 router.get('/user', verifyToken, utils_1.safe(actions.getUsers));
 router.get('/user/favorites', verifyToken, utils_1.safe(actions.getFavorites));
+///favorite - planet
+router.post('/favorite/planet/:id', verifyToken, utils_1.safe(actions.addPlanetFavorite));
+router["delete"]('/favorite/planet/:id', verifyToken, utils_1.safe(actions.deleteFavoritePlanet));
+///favorite - character
+router.post('/favorite/character/:id', verifyToken, utils_1.safe(actions.addCharacterFavorite));
+router["delete"]('/favorite/character/:id', verifyToken, utils_1.safe(actions.deleteFavoriteCharacter));
 exports["default"] = router;

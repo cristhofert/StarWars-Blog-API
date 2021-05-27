@@ -33,5 +33,10 @@ const verifyToken= (req: Request,res:Response, next:NextFunction) =>{
 
 router.get('/user',verifyToken, safe(actions.getUsers));
 router.get('/user/favorites',verifyToken, safe(actions.getFavorites));
-
+///favorite - planet
+router.post('/favorite/planet/:id',verifyToken, safe(actions.addPlanetFavorite))
+router.delete('/favorite/planet/:id',verifyToken, safe(actions.deleteFavoritePlanet))
+///favorite - character
+router.post('/favorite/character/:id',verifyToken, safe(actions.addCharacterFavorite))
+router.delete('/favorite/character/:id',verifyToken, safe(actions.deleteFavoriteCharacter))
 export default router;

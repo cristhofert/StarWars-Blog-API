@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.deleteFavoritCharacter = exports.deleteFavoritPlanet = exports.addCharacterFavorite = exports.addPlanetFavorite = exports.login = exports.createPlanets = exports.createCharacters = exports.getFavorites = exports.getCharacter = exports.getPlanet = exports.getCharacters = exports.getPlanets = exports.getUsers = exports.createUser = void 0;
+exports.deleteFavoriteCharacter = exports.deleteFavoritePlanet = exports.addCharacterFavorite = exports.addPlanetFavorite = exports.login = exports.createPlanets = exports.createCharacters = exports.getFavorites = exports.getCharacter = exports.getPlanet = exports.getCharacters = exports.getPlanets = exports.getUsers = exports.createUser = void 0;
 var typeorm_1 = require("typeorm"); // getRepository"  traer una tabla de la base de datos asociada al objeto
 var User_1 = require("./entities/User");
 var utils_1 = require("./utils");
@@ -139,10 +139,12 @@ var getCharacter = function (req, res) { return __awaiter(void 0, void 0, void 0
 }); };
 exports.getCharacter = getCharacter;
 var getFavorites = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var favorites;
+    var token, favorites;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).find({ where: { user: req.user } })];
+            case 0:
+                token = req.user;
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).find({ where: { user: token.user }, relations: ["user", "planet", "character"] })];
             case 1:
                 favorites = _a.sent();
                 return [2 /*return*/, res.json(favorites)];
@@ -282,7 +284,7 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
                 user = _a.sent();
                 if (!user)
                     throw new utils_1.Exception("Invalid email or password", 401);
-                token = jsonwebtoken_1["default"].sign({ user: user }, process.env.JWT_KEY, { expiresIn: 60 * 60 });
+                token = jsonwebtoken_1["default"].sign({ user: user }, process.env.JWT_KEY, { expiresIn: 24 * 60 * 60 });
                 // return the user and the recently created token to the client
                 return [2 /*return*/, res.json({ user: user, token: token })];
         }
@@ -329,43 +331,53 @@ var addCharacterFavorite = function (req, res) { return __awaiter(void 0, void 0
     });
 }); };
 exports.addCharacterFavorite = addCharacterFavorite;
-var deleteFavoritPlanet = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var planet, planetFavorite, results;
+var deleteFavoritePlanet = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, planet, user, planetFavorite, results;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Planet_1.Planet).findOne(req.params.id)];
+            case 0:
+                token = req.user;
+                return [4 /*yield*/, typeorm_1.getRepository(Planet_1.Planet).findOne(req.params.id)];
             case 1:
                 planet = _a.sent();
-                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).findOne({ where: { planet: planet } })];
+                return [4 /*yield*/, typeorm_1.getRepository(User_1.User).findOne(token.user)];
             case 2:
+                user = _a.sent();
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).findOne({ where: { planet: planet, user: user } })];
+            case 3:
                 planetFavorite = _a.sent();
                 if (!planetFavorite)
                     throw new utils_1.Exception("No tenes ese planeta en Favorites");
                 return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite)["delete"]({ planet: planet })];
-            case 3:
+            case 4:
                 results = _a.sent();
                 return [2 /*return*/, res.json(results)];
         }
     });
 }); };
-exports.deleteFavoritPlanet = deleteFavoritPlanet;
-var deleteFavoritCharacter = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var character, characterFavorite, results;
+exports.deleteFavoritePlanet = deleteFavoritePlanet;
+var deleteFavoriteCharacter = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, character, user, characterFavorite, results;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Character_1.Character).findOne(req.params.id)];
+            case 0:
+                token = req.user;
+                return [4 /*yield*/, typeorm_1.getRepository(Character_1.Character).findOne(req.params.id)];
             case 1:
                 character = _a.sent();
-                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).findOne({ where: { character: character } })];
+                return [4 /*yield*/, typeorm_1.getRepository(User_1.User).findOne(token.user)];
             case 2:
+                user = _a.sent();
+                return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite).findOne({ where: { character: character, user: user } })];
+            case 3:
                 characterFavorite = _a.sent();
                 if (!characterFavorite)
                     throw new utils_1.Exception("No tienes ese character en Favorites");
                 return [4 /*yield*/, typeorm_1.getRepository(Favorite_1.Favorite)["delete"]({ character: character })];
-            case 3:
+            case 4:
                 results = _a.sent();
                 return [2 /*return*/, res.json(results)];
         }
     });
 }); };
-exports.deleteFavoritCharacter = deleteFavoritCharacter;
+exports.deleteFavoriteCharacter = deleteFavoriteCharacter;

@@ -52,7 +52,8 @@ export const getCharacter = async (req: Request, res: Response): Promise<Respons
 }
 
 export const getFavorites = async (req: Request, res: Response): Promise<Response> =>{
-    const favorites = await getRepository(Favorite).find({ where: {user: req.user }})
+    const token = req.user as IToken
+    const favorites = await getRepository(Favorite).find({ where: {user: token.user },relations: ["user", "planet", "character"]})
     return res.json(favorites);
 }
 
@@ -129,7 +130,7 @@ export const login = async (req: Request, res: Response): Promise<Response> =>{
 	if(!user) throw new Exception("Invalid email or password", 401)
 
 	// this is the most important line in this function, it create a JWT token
-	const token = jwt.sign({ user }, process.env.JWT_KEY as string, { expiresIn: 60 * 60 });
+	const token = jwt.sign({ user }, process.env.JWT_KEY as string, { expiresIn: 24 * 60 * 60 });
 	
 	// return the user and the recently created token to the client
 	return res.json({ user, token });
@@ -163,18 +164,22 @@ export const addCharacterFavorite = async (req: Request, res: Response): Promise
 	    return res.json(results);
 }
 
-export const deleteFavoritPlanet = async (req: Request, res: Response): Promise<Response> =>{
-        const planet = await getRepository(Planet).findOne(req.params.id);
-        const planetFavorite = await getRepository(Favorite).findOne({where:{planet:planet}});
-        if(!planetFavorite) throw new Exception("No tenes ese planeta en Favorites")
-        const results = await getRepository(Favorite).delete({planet:planet})
-	    return res.json(results);
+export const deleteFavoritePlanet = async (req: Request, res: Response): Promise<Response> =>{
+    const token = req.user as IToken
+    const planet = await getRepository(Planet).findOne(req.params.id);
+    const user = await getRepository(User).findOne(token.user) 
+    const planetFavorite = await getRepository(Favorite).findOne({where:{planet:planet, user: user}});
+    if(!planetFavorite) throw new Exception("No tenes ese planeta en Favorites")
+    const results = await getRepository(Favorite).delete({planet:planet})
+    return res.json(results);
 }
 
-export const deleteFavoritCharacter = async (req: Request, res: Response): Promise<Response> =>{
-        const character = await getRepository(Character).findOne(req.params.id);
-        const characterFavorite = await getRepository(Favorite).findOne({where:{character:character}});
-        if(!characterFavorite) throw new Exception("No tienes ese character en Favorites")
-        const results = await getRepository(Favorite).delete({character:character})
-	    return res.json(results);
+export const deleteFavoriteCharacter = async (req: Request, res: Response): Promise<Response> =>{
+    const token = req.user as IToken
+    const character = await getRepository(Character).findOne(req.params.id);
+    const user = await getRepository(User).findOne(token.user) 
+    const characterFavorite = await getRepository(Favorite).findOne({where:{character:character, user: user}});
+    if(!characterFavorite) throw new Exception("No tienes ese character en Favorites")
+    const results = await getRepository(Favorite).delete({character:character})
+    return res.json(results);
 }
