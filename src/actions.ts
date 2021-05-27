@@ -134,3 +134,47 @@ export const login = async (req: Request, res: Response): Promise<Response> =>{
 	// return the user and the recently created token to the client
 	return res.json({ user, token });
 }
+
+interface IToken{
+    user:User,
+    iat:number,
+    exp:number
+}
+
+export const addPlanetFavorite = async (req: Request, res: Response): Promise<Response> =>{
+        const token = req.user as IToken
+        let favorite = new Favorite()
+        favorite.user=token.user
+        const planeta = await getRepository(Planet).findOne(req.params.id);
+        favorite.planet=planeta as Planet
+
+	    const results = await getRepository(Favorite).save(favorite); 
+	    return res.json(results);
+}
+
+export const addCharacterFavorite = async (req: Request, res: Response): Promise<Response> =>{
+        const token = req.user as IToken
+        let favorite = new Favorite()
+        favorite.user=token.user
+        const character = await getRepository(Character).findOne(req.params.id);
+        favorite.character=character as Character
+
+	    const results = await getRepository(Favorite).save(favorite); 
+	    return res.json(results);
+}
+
+export const deleteFavoritPlanet = async (req: Request, res: Response): Promise<Response> =>{
+        const planet = await getRepository(Planet).findOne(req.params.id);
+        const planetFavorite = await getRepository(Favorite).findOne({where:{planet:planet}});
+        if(!planetFavorite) throw new Exception("No tenes ese planeta en Favorites")
+        const results = await getRepository(Favorite).delete({planet:planet})
+	    return res.json(results);
+}
+
+export const deleteFavoritCharacter = async (req: Request, res: Response): Promise<Response> =>{
+        const character = await getRepository(Character).findOne(req.params.id);
+        const characterFavorite = await getRepository(Favorite).findOne({where:{character:character}});
+        if(!characterFavorite) throw new Exception("No tienes ese character en Favorites")
+        const results = await getRepository(Favorite).delete({character:character})
+	    return res.json(results);
+}

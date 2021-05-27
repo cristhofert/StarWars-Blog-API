@@ -20,13 +20,18 @@ router.post('/user', safe(actions.createUser));
 //planets
 router.get('/planet', safe(actions.getPlanets));
 router.get('/planet/:id', safe(actions.getPlanet));
+router.post('/character/:id', safe(actions.createCharacters));
 //characters
 router.get('/character', safe(actions.getCharacters));
 router.get('/character/:id', safe(actions.getCharacter));
-router.post('/character/:id', safe(actions.createCharacter));
-//favorites [GET] /users/favorites
+router.post('/character/:id', safe(actions.createCharacters));
+//favorites 
 router.get('/users/:uid/favorites', safe(actions.getFavorites));
-//[POST] /favorite/planet/<int:planet_id>y
-
+///favorite - planet
+router.post('/favorite/planet/:id', safe(actions.addPlanetFavorite))
+router.delete('/favorite/planet/:id', safe(actions.deleteFavoritPlanet))
+///favorite - character
+router.post('/favorite/character/:id', safe(actions.addCharacterFavorite))
+router.delete('/favorite/character/:id', safe(actions.deleteFavoritCharacter))
 
 export default router;
