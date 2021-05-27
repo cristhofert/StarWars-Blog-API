@@ -79,10 +79,8 @@ export const createCharacters = async (req: Request, res: Response): Promise<Res
         results.push(`that character ${req.body[index].name} wasnt save`)
     } else {const newCharacter = getRepository(Character).create(req.body[index]);  
 	results.push(await getRepository(Character).save(newCharacter))} 
-    
-       
+
     }
-    
 	return res.json(results);
 }
 
